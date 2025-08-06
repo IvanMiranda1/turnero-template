@@ -1,0 +1,45 @@
+src/main/java/com/app
+├── application/
+│   └── usecase/
+│       └── ClienteService.java
+│
+├── domain/
+│   ├── model/
+│   │   └── Cliente.java
+│   └── port/
+│       └── ClienteRepository.java  // <-- Interfaz del dominio
+│
+└── infrastructure/
+    ├── adapter/ //<-- los adaptadores implementan al /port/repository y lo delegan al infrastructure/persistence/repository/JPArepository
+    │   ├── persistence/
+    │   │   └── ClientePostgresAdapter.java  // <-- Implementa la interfaz del dominio
+    │   └── rest/
+    │       └── ClienteController.java
+    └── persistence/
+        ├── entity/
+        │   └── ClienteEntity.java
+        └── repository/
+            └── ClienteJpaRepository.java  // <-- Interfaz de JPA
+Esta estructura es la más aceptada porque hace que las dependencias fluyan hacia adentro, protegiendo el dominio de los cambios en la infraestructura, que es el objetivo principal de la arquitectura hexagonal.
+
+entonces el flujo de trabajo es:
+
+/domain/port/repository : se definen los metodos que se usaran para comunicarse con la base de datos, no importa si jpa tiene metodos predefinidos como save, findbyid estructura
+
+/infrastructure/adapter/persistence/ toma los metodos del port/repository por ejemplo a mi metodo:
+    Cliente CreateOrUpdate(Cliente c)
+    e implemento el createorUpdate usando el save() de jpa 
+
+    en el service esta implementacion se hace individual para seguir el principio de responsabilidad unica
+    es decir, en el service habra dos metodos create y CreateOrUpdate
+
+/infrastructure/persistence/repository
+    son las funciones jpa predefinidas que seran implementadas por el adaptadores
+    si se necesitan hacer consultas personalizadas se hacen aceptada
+
+/infrastructure/adapter/rest/ estan los controller o handler
+1 su principal funcion es recibir consultas http que tendran las entidades y demas
+2 convertirlos a entidad de dominio y llamar a los servicios
+3 los servicios llamaran al adaptador que implementa el repository y se comunican con el jpa
+
+este es el flujo de trabajo.

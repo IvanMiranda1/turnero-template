@@ -28,30 +28,30 @@ This repository was created to serve as a cloneable template, allowing developer
 - Ready to be cloned, extended, and reused
 
 ## Project Structure
-com/
-└── app/
-    ├── TurneroApplication.java
-    ├── application/
-    │   └── usecase/
-    │       └── EntityService.java
-    ├── domain/
-    │   ├── model/
-    │   │   └── Entity.java
-    │   └── port/
-    │       └── EntityRepository.java
-    └── infrastructure/
-        ├── adapter/
-        │   ├── persistence/
-        │   │   └── EntityPostgresAdapter.java
-        │   └── rest/
-        │       └── EntityController.java
-        ├── dto/
-        │   └── EntityDTO.java
-        └── persistence/
-            ├── entity/
-            │   └── EntityEntityJPA.java
-            └── repository/
-                └── EntityJpaRepository.java
+com/  
+└── app/  
+    ├── TurneroApplication.java  
+    ├── application/  
+    │   └── usecase/  
+    │       └── EntityService.java  
+    ├── domain/  
+    │   ├── model/  
+    │   │   └── Entity.java  
+    │   └── port/  
+    │       └── EntityRepository.java  
+    └── infrastructure/  
+        ├── adapter/  
+        │   ├── persistence/  
+        │   │   └── EntityPostgresAdapter.java  
+        │   └── rest/  
+        │       └── EntityController.java  
+        ├── dto/  
+        │   └── EntityDTO.java  
+        └── persistence/  
+            ├── entity/  
+            │   └── EntityEntityJPA.java  
+            └── repository/  
+                └── EntityJpaRepository.java  
 
 ## Requirements
 

@@ -56,7 +56,7 @@ com/
 ## Requirements
 
 - Java 21+
-- Maven or Gradle
+- Maven
 - PostgreSQL
 
 ## Getting Started

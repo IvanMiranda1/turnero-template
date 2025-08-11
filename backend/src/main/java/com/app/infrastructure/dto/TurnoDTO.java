@@ -1,0 +1,21 @@
+package com.app.infrastructure.dto;
+
+import java.time.LocalDate;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class TurnoDTO {
+    private String id;
+    private LocalDate fecha_alta;
+    private LocalDate fecha_turno;
+    private String fk_estado;
+    private String fk_cliente;
+    private String fk_usuario;
+    private String fk_servicio;
+    private String detalle;
+}

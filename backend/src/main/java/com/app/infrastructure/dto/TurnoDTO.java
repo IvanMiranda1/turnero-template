@@ -1,6 +1,7 @@
 package com.app.infrastructure.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class TurnoDTO {
     private String id;
     private LocalDate fecha_alta;
-    private LocalDate fecha_turno;
+    private LocalDateTime fecha_turno;
     private String fk_estado;
     private String fk_cliente;
     private String fk_usuario;

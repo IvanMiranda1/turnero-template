@@ -8,12 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import com.app.infrastructure.persistence.entity.ClienteEntity;
 
 public interface ClienteJpaRepository extends JpaRepository<ClienteEntity, String> {
-    @Query("SELECT c FROM ClienteEntity c WHERE c.nombre = ?1")
+    @Query("SELECT c FROM ClienteEntity c WHERE c.nombre LIKE %?1%")
     List<ClienteEntity> findByNombre(String nombre);
-    @Query("SELECT c FROM ClienteEntity c WHERE c.apellido = ?1")
+    @Query("SELECT c FROM ClienteEntity c WHERE c.apellido LIKE %?1%")
     List<ClienteEntity> findByApellido(String apellido);
-    @Query("SELECT c FROM ClienteEntity c WHERE c.email = ?1")
+    @Query("SELECT c FROM ClienteEntity c WHERE c.email LIKE %?1%")
     List<ClienteEntity> findByEmail(String email);
-    @Query("SELECT c FROM ClienteEntity c WHERE c.telefono = ?1")   
+    @Query("SELECT c FROM ClienteEntity c WHERE c.telefono LIKE %?1%")   
     List<ClienteEntity> findByTelefono(String telefono);
 }

@@ -9,6 +9,6 @@ import com.app.infrastructure.persistence.entity.EstadoTurnoEntity;
 
 public interface EstadoTurnoJpaRepository extends JpaRepository<EstadoTurnoEntity, String> {
     //los metodos deben devolver la clase entity de cada tabla
-    @Query("SELECT e FROM EstadoTurnoEntity e WHERE e.nombre = ?1")
+    @Query("SELECT e FROM EstadoTurnoEntity e WHERE e.nombre LIKE %?1%")
     List<EstadoTurnoEntity> findByNombre(String nombre);
 }

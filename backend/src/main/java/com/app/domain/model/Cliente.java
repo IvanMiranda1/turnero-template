@@ -11,6 +11,9 @@ public class Cliente {
     private String email;
     private String telefono;
 
+    public Cliente() {
+    }
+
     public Cliente(String id, String nombre, String apellido, String email, String telefono) {
         this.id = id;
         this.nombre = nombre;

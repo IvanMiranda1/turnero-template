@@ -1,0 +1,38 @@
+services:
+  database:
+    container_name: database-turnero
+    build:
+      context: ./database  # Docker buscará el Dockerfile aca
+    restart: always
+    environment:
+      POSTGRES_DB: turnero_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"  # Se cambió el puerto del lado de la máquina local a 5433
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  backend:
+    container_name: backend-turnero
+    build:
+      context: ./backend  # Docker buscará el Dockerfile aquí
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/turnero_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+#  frontend:
+#    build:
+#      context: ./frontend
+#    container_name: frontend-turnero
+#    ports:
+#      - "3000:80" #NGINX sirve el frontend en el puerto 80
+#    depends_on:
+#      - backend
+volumes:
+  pg_data:

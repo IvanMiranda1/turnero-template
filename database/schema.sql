@@ -55,6 +55,6 @@ CREATE TABLE turno(
     detalle TEXT,
     CONSTRAINT fk_turno_cliente FOREIGN KEY(fk_cliente) REFERENCES cliente(id),
     CONSTRAINT fk_turno_usuario FOREIGN KEY(fk_usuario) REFERENCES usuario(id),
-    CONSTRAINT fk_turno_servicio FOREIGN KEY(fk_servicio) REFERENCES servicio(id)
+    CONSTRAINT fk_turno_servicio FOREIGN KEY(fk_servicio) REFERENCES servicio(id),
     CONSTRAINT fk_turno_estado FOREIGN KEY (fk_estado) REFERENCES estado_turno(id)
 );

@@ -11,17 +11,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "cliente")
+@Table(name = "estado_turno")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClienteEntity {
+public class EstadoTurnoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
     private String id;
     private String nombre;
-    private String apellido;
-    private String email;
-    private String telefono;
 }

@@ -1,4 +1,4 @@
-package com.app.infrastructure.adapter.rest;
+ package com.app.infrastructure.adapter.rest;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

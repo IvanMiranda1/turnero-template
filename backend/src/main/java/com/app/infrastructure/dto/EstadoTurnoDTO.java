@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Estado_TurnoDTO {
+public class EstadoTurnoDTO {
     private String id;
     private String nombre;
 }

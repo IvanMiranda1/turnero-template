@@ -1,5 +1,7 @@
 package com.app.application.usecase;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.app.domain.model.Cliente;
@@ -13,21 +15,40 @@ public class ClienteService {
         this.ClienteRepository = ClienteRepository;
     }
 
-    //Funciones del crud
     public Cliente create(Cliente cliente) {
-        //validaciones de por ejemplo email, telefono, etc
-        return ClienteRepository.CreateOrUpdate(cliente);
+        return ClienteRepository.createOrUpdate(cliente);
     }
 
     public Cliente update(Cliente cliente) {
-        return ClienteRepository.CreateOrUpdate(cliente);
+        return ClienteRepository.createOrUpdate(cliente);
+    }
+    
+    public void delete(String id) {
+        ClienteRepository.delete(id);
     }
 
     public Cliente findById(String id) {
-        return ClienteRepository.FindById(id);
+        return ClienteRepository.findById(id);
     }
 
-    public void delete(String id) {
-        ClienteRepository.Delete(id);
+    public List<Cliente> findAll() {
+        return ClienteRepository.findAll();
     }
+
+    public List<Cliente> findByNombre(String nombre) {
+        return ClienteRepository.findByNombre(nombre);
+    }
+
+    public List<Cliente> findByApellido(String apellido) {
+        return ClienteRepository.findByApellido(apellido);
+    }
+
+    public List<Cliente> findByEmail(String email) {
+        return ClienteRepository.findByEmail(email);
+    }
+
+    public List<Cliente> findByTelefono(String telefono) {
+        return ClienteRepository.findByTelefono(telefono);
+    }
+
 }

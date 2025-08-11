@@ -4,14 +4,14 @@ package com.app.domain.model;
 //son clases simples, que representan el modelo del negocio
 //y que se usan en la capa de dominio
 //en este caso, Estado_Turno es una entidad del dominio
-public class Estado_Turno {
+public class EstadoTurno {
     private String id;
     private String nombre;
 
-    public Estado_Turno() {
+    public EstadoTurno() {
     }
 
-    public Estado_Turno(String id, String nombre) {
+    public EstadoTurno(String id, String nombre) {
         this.id = id;
         this.nombre = nombre;
     }

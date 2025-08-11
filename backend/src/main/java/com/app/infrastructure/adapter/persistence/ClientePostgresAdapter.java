@@ -29,52 +29,62 @@ public class ClientePostgresAdapter implements ClienteRepository {
     }
 
     @Override
-    public Cliente CreateOrUpdate(Cliente cliente) {
+    public Cliente createOrUpdate(Cliente cliente) {
         ClienteEntity entity = toEntity(cliente);
         ClienteEntity savedEntity = clienteJpaRepository.save(entity);
         return toDomain(savedEntity);
     }
 
     @Override
-    public Cliente FindById(String id) {
+    public Cliente findById(String id) {
         return clienteJpaRepository.findById(id)
                 .map(this::toDomain)
                 .orElse(null);
     }
 
     @Override
-    public void Delete(String id) {
+    public void delete(String id) {
         clienteJpaRepository.deleteById(id);
     }
 
      @Override
-    public List<Cliente> FindAll() {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Cliente> findAll() {
+        return clienteJpaRepository.findAll()
+                .stream()
+                .map(this::toDomain)
+                .toList();
     }
 
     @Override
-    public List<Cliente> FindByApellido(String apellido) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Cliente> findByApellido(String apellido) {
+        return clienteJpaRepository.findByApellido(apellido)
+                .stream()
+                .map(this::toDomain)
+                .toList();  
     }
 
     @Override
-    public List<Cliente> FindByEmail(String email) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Cliente> findByEmail(String email) {
+        return clienteJpaRepository.findByEmail(email)
+                .stream()
+                .map(this::toDomain)
+                .toList();        
     }
 
     @Override
-    public List<Cliente> FindByNombre(String nombre) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Cliente> findByNombre(String nombre) {
+        return clienteJpaRepository.findByNombre(nombre)
+                .stream()
+                .map(this::toDomain)
+                .toList();
     }
 
     @Override
-    public List<Cliente> FindByTelefono(String telefono) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Cliente> findByTelefono(String telefono) {
+        return clienteJpaRepository.findByTelefono(telefono)
+                .stream()
+                .map(this::toDomain)
+                .toList();
     }
 
 

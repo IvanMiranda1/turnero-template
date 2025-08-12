@@ -19,7 +19,7 @@ services:
       context: ./backend  # Docker buscará el Dockerfile aquí
     restart: always
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/turnero_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database-turnero:5432/turnero_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
     ports:

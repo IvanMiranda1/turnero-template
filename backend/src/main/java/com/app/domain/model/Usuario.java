@@ -13,13 +13,14 @@ public class Usuario {
     private String apellido;
     private String dni;
     private String email;
+    private Rol rol; //es el model
     private LocalDateTime fecha_creacion;
     private LocalDate ultima_sesion;
 
     public Usuario() {
     }
 
-    public Usuario(String id, String nombre, String apellido, String dni, String email, LocalDateTime fecha_creacion, LocalDate ultima_sesion) {
+    public Usuario(String id, String nombre, String apellido, String dni, String email, LocalDateTime fecha_creacion, LocalDate ultima_sesion, Rol rol) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -27,6 +28,7 @@ public class Usuario {
         this.email = email;
         this.fecha_creacion = fecha_creacion;
         this.ultima_sesion = ultima_sesion;
+        this.rol = rol;
     }
 
     public String getId() {
@@ -84,4 +86,8 @@ public class Usuario {
     public void setUltima_sesion(LocalDate ultima_sesion) {
         this.ultima_sesion = ultima_sesion;
     }
+
+    public Rol getRol() { return rol; }
+
+    public void setRol(Rol rol) { this.rol = rol; }
 }

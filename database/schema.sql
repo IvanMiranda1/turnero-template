@@ -19,7 +19,7 @@ CREATE TABLE servicio(
 
 -- Creación de la tabla de roles
 CREATE TABLE rol (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY,
     nombre_rol VARCHAR(50) NOT NULL UNIQUE
 );
 

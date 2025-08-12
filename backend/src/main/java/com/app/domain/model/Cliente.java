@@ -10,16 +10,18 @@ public class Cliente {
     private String apellido;
     private String email;
     private String telefono;
+    private String dni;
 
     public Cliente() {
     }
 
-    public Cliente(String id, String nombre, String apellido, String email, String telefono) {
+    public Cliente(String id, String nombre, String apellido, String email, String telefono, String dni) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
         this.telefono = telefono;
+        this.dni = dni;
     }
 
     public String getId() {
@@ -60,5 +62,12 @@ public class Cliente {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+    public String getDni() {
+        return dni;
+    }
+
+    public void setDni(String dni) {
+        this.dni = dni;
     }
 }

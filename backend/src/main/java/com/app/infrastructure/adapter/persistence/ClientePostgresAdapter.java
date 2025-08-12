@@ -95,7 +95,8 @@ public class ClientePostgresAdapter implements ClienteRepository {
             cliente.getNombre(),
             cliente.getApellido(),
             cliente.getEmail(),
-            cliente.getTelefono()
+            cliente.getTelefono(),
+            cliente.getDni()
         );
     }
 
@@ -106,7 +107,8 @@ public class ClientePostgresAdapter implements ClienteRepository {
             entity.getNombre(),
             entity.getApellido(),
             entity.getEmail(),
-            entity.getTelefono()
+            entity.getTelefono(),
+            entity.getDni()
         );
     }
 

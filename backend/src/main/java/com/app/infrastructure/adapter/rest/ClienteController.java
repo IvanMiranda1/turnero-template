@@ -34,11 +34,11 @@ public class ClienteController {
 
 // Métodos de conversión (DTO <-> Dominio)
     private Cliente toDomain(ClienteDTO dto) {
-        return new Cliente(dto.getId(), dto.getNombre(), dto.getApellido(), dto.getEmail(), dto.getTelefono());
+        return new Cliente(dto.getId(), dto.getNombre(), dto.getApellido(), dto.getEmail(), dto.getTelefono(), dto.getDni());
     }
 
     private ClienteDTO toDTO(Cliente cliente) {
-        return new ClienteDTO(cliente.getId(), cliente.getNombre(), cliente.getApellido(), cliente.getEmail(), cliente.getTelefono());
+        return new ClienteDTO(cliente.getId(), cliente.getNombre(), cliente.getApellido(), cliente.getEmail(), cliente.getTelefono(), cliente.getDni());
     }
 
 }

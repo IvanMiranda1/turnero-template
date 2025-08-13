@@ -17,6 +17,6 @@ private String id;
     private String dni;
     private String email;
     private String rol;
-    private LocalDateTime fecha_creacion;
-    private LocalDate ultima_sesion;
+    private LocalDate fecha_creacion;
+    private LocalDateTime ultima_sesion;
 }

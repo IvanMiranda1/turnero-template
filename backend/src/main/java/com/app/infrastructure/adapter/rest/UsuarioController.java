@@ -2,6 +2,7 @@ package com.app.infrastructure.adapter.rest;
 
 import java.util.List;
 
+import com.app.domain.model.Rol;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -105,25 +106,37 @@ public class UsuarioController {
 
     //metodos aux
     private Usuario toDomain(UsuarioDTO dto) {
+        // 1. IMPORTANTE: Necesitas importar la clase Rol para crear un objeto.
+        // import com.app.domain.model.Rol;
+
+        // 2. Antes de crear el Usuario, crea un objeto Rol a partir del String del DTO.
+        // Asume que tienes un constructor o un setter para el nombre del rol.
+        Rol rol = new Rol();
+        rol.setNombre(dto.getRol());
+
+        // 3. Pasa el objeto 'rol' recién creado al constructor de Usuario.
         return new Usuario(
-            dto.getId(),
-            dto.getNombre(),
-            dto.getApellido(),
-            dto.getDni(),
-            dto.getEmail(),
-            dto.getFecha_creacion(),
-            dto.getUltima_sesion()
+                dto.getId(),
+                dto.getNombre(),
+                dto.getApellido(),
+                dto.getDni(),
+                dto.getEmail(),
+                rol, // Aquí pasas el objeto Rol, no el String
+                dto.getFecha_creacion(),
+                dto.getUltima_sesion()
         );
-    } 
+    }
+
     private UsuarioDTO toDTO(Usuario usuario) {
         return new UsuarioDTO(
-            usuario.getId(),
-            usuario.getNombre(),
-            usuario.getApellido(),
-            usuario.getDni(),
-            usuario.getEmail(),
-            usuario.getFecha_creacion(),
-            usuario.getUltima_sesion()
+                usuario.getId(),
+                usuario.getNombre(),
+                usuario.getApellido(),
+                usuario.getDni(),
+                usuario.getEmail(),
+                usuario.getRol().getNombre(), // Obtienes el String del objeto Rol
+                usuario.getFecha_creacion(),
+                usuario.getUltima_sesion()
         );
     }
 }

@@ -3,6 +3,7 @@ package com.app.infrastructure.persistence.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.app.domain.model.Rol;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,7 +28,8 @@ public class UsuarioEntity {
     private String apellido;
     private String dni;
     private String email;
-    private LocalDateTime fecha_creacion;
-    private LocalDate ultima_sesion;
+    private String  rol; // uso un string para el rol, en lugar de Rol como tipo de dato
+    private LocalDate fecha_creacion;
+    private LocalDateTime ultima_sesion;
     
 }

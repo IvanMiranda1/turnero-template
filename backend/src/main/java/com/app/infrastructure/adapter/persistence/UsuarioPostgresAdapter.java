@@ -2,6 +2,7 @@ package com.app.infrastructure.adapter.persistence;
 
 import java.util.List;
 
+import com.app.domain.model.Rol;
 import org.springframework.stereotype.Component;
 
 import com.app.domain.model.Usuario;
@@ -76,17 +77,23 @@ public class UsuarioPostgresAdapter implements UsuarioRepository {
             usuario.getApellido(),
             usuario.getDni(),
             usuario.getEmail(),
+            usuario.getRol().getNombre(), //obtengo el nombre del rol como "string"
             usuario.getFecha_creacion(),
             usuario.getUltima_sesion()
         );
     }
     private Usuario toDomain(UsuarioEntity entity) {
+        // Usamos el constructor vacío y luego el setter
+        Rol rol = new Rol();
+        rol.setNombre(entity.getRol()); // El entity.getRol() devuelve el String del nombre
+
         return new Usuario(
             entity.getId(),
             entity.getNombre(),
             entity.getApellido(),
             entity.getDni(),
             entity.getEmail(),
+            rol, //envio un objeto Rol, no un String
             entity.getFecha_creacion(),
             entity.getUltima_sesion()
         );

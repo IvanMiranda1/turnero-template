@@ -36,7 +36,7 @@ CREATE TABLE usuario(
     nombre VARCHAR(255) NOT NULL,
     apellido VARCHAR(255) NOT NULL,
     dni VARCHAR(8) NOT NULL UNIQUE,
-    fk_rol INT NOT NULL, -- Clave foránea a la tabla de roles
+    fk_rol UUID NOT NULL, -- Clave foránea a la tabla de roles
     fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ultima_sesion TIMESTAMP,
     CONSTRAINT fk_usuario_rol FOREIGN KEY (fk_rol) REFERENCES rol(id)

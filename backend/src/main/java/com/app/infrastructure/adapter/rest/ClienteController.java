@@ -27,7 +27,6 @@ public class ClienteController {
         //convierte de dominio a dto
         ClienteDTO createdClienteDTO = toDTO(createdCliente);
         return ResponseEntity.ok(createdClienteDTO);
-
     }
 
 

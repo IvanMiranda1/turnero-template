@@ -87,7 +87,7 @@ public class ClientePostgresAdapter implements ClienteRepository {
                 .toList();
     }
 
-
+    //metoos aux
     private ClienteEntity toEntity(Cliente cliente) {
         // Usa el constructor generado por Lombok para crear la entidad en una sola línea
         return new ClienteEntity(
@@ -99,7 +99,6 @@ public class ClientePostgresAdapter implements ClienteRepository {
             cliente.getDni()
         );
     }
-
     private Cliente toDomain(ClienteEntity entity) {
         // Lógica de conversión de ClienteEntity a Cliente
         return new Cliente(

@@ -23,7 +23,7 @@ public class ClienteService {
         //capitalizacion de nombre y apellidos
         capitalizacionDeCliente(cliente);
 
-        if (clienteRepository.countByEmailOrDniOrTelefono(cliente.getEmail(), cliente.getDni(), cliente.getTelefono()) > 0) {
+        if (clienteRepository.countByEmailOrDniOrTelefonoAndId(cliente.getEmail(), cliente.getDni(), cliente.getTelefono(), null) > 0) {
             throw new IllegalArgumentException("Ya existe un cliente con ese email, DNI o teléfono.");
         }
 
@@ -43,7 +43,7 @@ public class ClienteService {
         if ((!cliente.getEmail().equals(existente.getEmail()) ||
             !cliente.getDni().equals(existente.getDni()) ||
             !cliente.getTelefono().equals(existente.getTelefono())) &&
-            clienteRepository.countByEmailOrDniOrTelefono(cliente.getEmail(), cliente.getDni(), cliente.getTelefono(), cliente.getId()) > 0) {
+            clienteRepository.countByEmailOrDniOrTelefonoAndId(cliente.getEmail(), cliente.getDni(), cliente.getTelefono(), cliente.getId()) > 0) {
             throw new IllegalArgumentException("Ya existe un cliente con ese email, DNI o teléfono.");
         }
         //validaciones de campos obligatorios y formato correcto

@@ -2,8 +2,6 @@ package com.app.domain.port;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Query;
-
 import com.app.domain.model.Cliente;
 
 public interface ClienteRepository{
@@ -15,7 +13,7 @@ public interface ClienteRepository{
     List<Cliente> findByApellido(String apellido);
     List<Cliente> findByEmail(String email);
     List<Cliente> findByTelefono(String telefono);
-    Long countByEmailOrDniOrTelefono(String email, String dni, String telefono, String id);
+    Long countByEmailOrDniOrTelefonoAndId(String email, String dni, String telefono, String id);
 }
 
 // repository interface define los metodos que se implementaran en el persistence/ClientePostgresAdapter.java

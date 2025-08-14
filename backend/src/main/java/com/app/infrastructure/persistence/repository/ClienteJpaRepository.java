@@ -34,6 +34,6 @@ public interface ClienteJpaRepository extends JpaRepository<ClienteEntity, Strin
     @Query("SELECT COUNT(c) FROM ClienteEntity c WHERE c.email = ?1 OR c.dni = ?2 OR c.telefono = ?3")
     Long countByEmailOrDniOrTelefono(String email, String dni, String telefono);
 
-    @Query("SELECT COUNT(c) FROM ClienteEntity c WHERE (c.email = ?1 OR c.dni = ?2 OR c.telefono = ?3) AND c.id <> ?4")
-    Long countByEmailOrDniOrTelefonoAndIdNot(String email, String dni, String telefono, Long id);
+    @Query("SELECT COUNT(c) FROM ClienteEntity c WHERE (c.email = ?1 OR c.dni = ?2 OR c.telefono = ?3) AND (:id IS NULL OR c.id <> ?4)")
+    Long countByEmailOrDniOrTelefonoAndId(String email, String dni, String telefono, String id);
 }

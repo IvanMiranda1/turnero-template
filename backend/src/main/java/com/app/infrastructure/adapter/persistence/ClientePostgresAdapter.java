@@ -87,6 +87,11 @@ public class ClientePostgresAdapter implements ClienteRepository {
                 .toList();
     }
 
+    @Override
+    public Long countByEmailOrDniOrTelefonoAndId(String email, String dni, String telefono, String id) {
+        return clienteJpaRepository.countByEmailOrDniOrTelefonoAndId(email, dni, telefono, id);
+    }
+
     //metoos aux
     private ClienteEntity toEntity(Cliente cliente) {
         // Usa el constructor generado por Lombok para crear la entidad en una sola línea

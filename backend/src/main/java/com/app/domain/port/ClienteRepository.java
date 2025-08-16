@@ -1,13 +1,14 @@
 package com.app.domain.port;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.app.domain.model.Cliente;
 
 public interface ClienteRepository{
     Cliente createOrUpdate(Cliente cliente);
     void delete(String id);
-    Cliente findById(String id);
+    Optional<Cliente> findById(String id);
     List<Cliente> findAll();
     List<Cliente> findByNombre(String nombre);
     List<Cliente> findByApellido(String apellido);

@@ -1,16 +1,15 @@
 package com.app.turnero;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-import org.checkerframework.checker.units.qual.A;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.app.domain.model.Cliente;
 import com.app.domain.port.ClienteRepository;
-
-import lombok.extern.java.Log;
 
 import com.app.application.usecase.ClienteService;
 import org.junit.jupiter.api.BeforeEach;
@@ -175,6 +174,97 @@ class ClienteServiceTest {
         assertEquals(clienteExistente.getId(), clienteActualizado.getId());
     }
 
+    @Test
+    void testUpdate_validacion_de_campo_obligatorio_Id() {
+        Cliente cliente = new Cliente();
+        cliente.setNombre("Pepe");
+        cliente.setApellido("Alonso");
+        cliente.setEmail("PepeAlonso@gmail.com");
+        cliente.setDni("12345678");
+        cliente.setTelefono("2964123456");
+        
+        assertThrows(IllegalArgumentException.class, () -> clienteService.update(cliente));
+        verify(clienteRepository, never()).createOrUpdate(any());
+        verify(clienteRepository, never()).findById(anyString());
+    }
+
+    @Test
+    void testUpdate_cliente_no_existente() {
+        Cliente cliente = new Cliente();
+        cliente.setId("1");
+        cliente.setNombre("Pepe");
+        cliente.setApellido("Alonso");
+        cliente.setEmail("PepeAlonso@gmail.com");
+        cliente.setDni("12345678");
+        cliente.setTelefono("2964123456");
+
+        //se simula que no existe el cliente con id "1"
+        when(clienteRepository.findById("1")).thenReturn(null);
+
+        //se espera que se lance una excepcion
+        assertThrows(IllegalArgumentException.class, () -> clienteService.update(cliente));
+        //se verifica que se llamo una vez al findbyid (que da error), y nunca se llega a llamar al createorupdate
+        verify(clienteRepository, times(1)).findById("1");
+        verify(clienteRepository, never()).countByEmailOrDniOrTelefonoAndId(any(), any(), any(), any());
+        verify(clienteRepository, never()).createOrUpdate(any());
+    }
+
+    @Test
+    void testUpdate_error_validar_unicidad() 
+    {
+         Cliente clienteExistente = new Cliente();
+        clienteExistente.setId("1");
+        clienteExistente.setNombre("Pepito");
+        clienteExistente.setApellido("Rodriguez");
+        clienteExistente.setEmail("pepito@gmail.com");
+        clienteExistente.setDni("12345678");
+        clienteExistente.setTelefono("2964123456");
+
+        Cliente clienteModificado = new Cliente();
+        clienteModificado.setId("1");
+        clienteModificado.setNombre("Pepito");
+        clienteModificado.setApellido("Rodriguez");
+        clienteModificado.setEmail("duplicado@gmail.com"); // Cambia el email
+        clienteModificado.setDni("12345678");
+        clienteModificado.setTelefono("2964123456");
+
+        //findbyid devuelve el cliente existente
+        when(clienteRepository.findById("1")).thenReturn(clienteExistente);
+        //se simula que ya existe un cliente con el email duplicado, por eso devuelve 1, quiere decir que hay un duplicado de email, dni o telefono
+        when(clienteRepository.countByEmailOrDniOrTelefonoAndId(eq("duplicado@gmail.com"), eq("12345678"), eq("2964123456"), eq("1"))).thenReturn(1L);
+
+        //se espera que se lance una excepcion
+        assertThrows(IllegalArgumentException.class, () -> clienteService.update(clienteModificado));
+    }
+
+    @Test
+    void testUpdate_validacion_de_campos_obligatorios_y_formato_correcto()
+    {
+        Cliente clienteExistente = new Cliente(); 
+        clienteExistente.setId("1");
+        clienteExistente.setNombre("Pepito");
+        clienteExistente.setApellido("Rodriguez");
+        clienteExistente.setEmail("pepito@gmail.com");
+        clienteExistente.setDni("12345678");
+        clienteExistente.setTelefono("2964123456");
+        
+        Cliente clienteModificado = new Cliente();
+        clienteModificado.setId("1");
+        clienteModificado.setNombre("");
+        clienteModificado.setApellido("Alonso");
+        clienteModificado.setEmail("formatoincorrecto");
+        clienteModificado.setDni("12345678");
+        clienteModificado.setTelefono("2964123456");
+        
+        when(clienteRepository.findById("1"))
+            .thenReturn(Optional.of(clienteExistente));
+        assertThrows(IllegalArgumentException.class,
+            () -> clienteService.update(clienteModificado));
+        //se verifica que se llamo al findbyid
+        verify(clienteRepository, times(1)).findById("1");
+        //se verifica que no se llamo al createorupdate
+        verify(clienteRepository, never()).createOrUpdate(any());
+    }
 }
 
 /*

@@ -1,6 +1,7 @@
 package com.app.infrastructure.adapter.persistence;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -24,10 +25,9 @@ public class EstadoTurnoPostgresAdapter implements EstadoTurnoRepository {
         return toDomain(savedEntity);
     }
     @Override
-    public EstadoTurno findById(String id) {
+    public Optional<EstadoTurno> findById(String id) {
         return estadoTurnoJpaRepository.findById(id)
-                .map(this::toDomain)
-                .orElse(null);
+                .map(this::toDomain);
     }
     
     @Override
@@ -51,6 +51,21 @@ public class EstadoTurnoPostgresAdapter implements EstadoTurnoRepository {
         estadoTurnoJpaRepository.deleteById(id);
     }
 
+    @Override
+    public Long existByNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del estado de turno no puede ser nulo o vacío.");
+        }
+        return estadoTurnoJpaRepository.countByNombre(nombre);
+    }
+
+    @Override
+    public Long existUsoDelEstado(String idEstadoTurno) {
+        if (idEstadoTurno == null || idEstadoTurno.trim().isEmpty()) {
+            throw new IllegalArgumentException("El ID del estado de turno no puede ser nulo o vacío.");
+        }
+        return estadoTurnoJpaRepository.existUsoDelEstado(idEstadoTurno);
+    }
 
     //metodos aux
     private EstadoTurnoEntity toEntity(EstadoTurno estado_turno) {

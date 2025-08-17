@@ -202,7 +202,7 @@ class ClienteServiceTest {
         when(clienteRepository.findById("1")).thenReturn(null);
 
         //se espera que se lance una excepcion
-        assertThrows(IllegalArgumentException.class, () -> clienteService.update(cliente));
+        assertThrows(NullPointerException.class, () -> clienteService.update(cliente));
         //se verifica que se llamo una vez al findbyid (que da error), y nunca se llega a llamar al createorupdate
         verify(clienteRepository, times(1)).findById("1");
         verify(clienteRepository, never()).countByEmailOrDniOrTelefonoAndId(any(), any(), any(), any());

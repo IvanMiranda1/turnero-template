@@ -1,6 +1,7 @@
 package com.app.infrastructure.adapter.persistence;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -36,10 +37,12 @@ public class ClientePostgresAdapter implements ClienteRepository {
     }
 
     @Override
-    public Cliente findById(String id) {
+    public Optional<Cliente> findById(String id) {
+        if (id == null || id.trim().isEmpty()) {
+            throw new IllegalArgumentException("El ID del cliente es obligatorio para buscar.");
+        }
         return clienteJpaRepository.findById(id)
-                .map(this::toDomain)
-                .orElse(null);
+                .map(this::toDomain);
     }
 
     @Override

@@ -30,11 +30,13 @@ public class ClienteService {
         return clienteRepository.createOrUpdate(cliente);
     }
 
-    public Cliente update(Cliente cliente) {
+    public Cliente update(Cliente cliente) 
+    {
         if (cliente.getId() == null || cliente.getId().trim().isEmpty()) {
             throw new IllegalArgumentException("El ID del cliente es obligatorio para actualizar.");
         }
-        Cliente existente = clienteRepository.findById(cliente.getId());
+        Cliente existente = clienteRepository.findById(cliente.getId())
+            .orElseThrow( () -> new IllegalArgumentException("No existe un cliente con el ID proporcionado."));
         if (existente == null) {
             throw new IllegalArgumentException("No existe un cliente con el ID proporcionado.");
         }
@@ -54,6 +56,12 @@ public class ClienteService {
     }
     
     public void delete(String id) {
+        if (id == null || id.trim().isEmpty()) {
+            throw new IllegalArgumentException("El ID del cliente es obligatorio para eliminar.");
+        }
+        if (!clienteRepository.findById(id).isPresent()) {
+            throw new IllegalArgumentException("No existe un cliente con el ID proporcionado.");
+        }
         clienteRepository.delete(id);
     }
 
@@ -61,7 +69,8 @@ public class ClienteService {
         if (id == null || id.trim().isEmpty()) {
             throw new IllegalArgumentException("El ID del cliente es obligatorio para buscar.");
         }
-        return clienteRepository.findById(id);
+        return clienteRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("No existe un cliente con el ID proporcionado."));
     }
 
     public List<Cliente> findAll() {

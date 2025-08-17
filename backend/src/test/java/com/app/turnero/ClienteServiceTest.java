@@ -152,7 +152,7 @@ class ClienteServiceTest {
         clienteModificado.setTelefono("2964123456");
 
         //se configuran mocks del update
-        when(clienteRepository.findById("1")).thenReturn(clienteExistente);
+        when(clienteRepository.findById("1")).thenReturn(Optional.of(clienteExistente)); // se simula que existe el cliente con id "1"
         when(clienteRepository.countByEmailOrDniOrTelefonoAndId("JuanPerez@gmail.com", "12345678", "2964123456", "1")).thenReturn(0L);
         when(clienteRepository.createOrUpdate(clienteModificado)).thenReturn(clienteModificado);
         
@@ -229,7 +229,7 @@ class ClienteServiceTest {
         clienteModificado.setTelefono("2964123456");
 
         //findbyid devuelve el cliente existente
-        when(clienteRepository.findById("1")).thenReturn(clienteExistente);
+        when(clienteRepository.findById("1")).thenReturn(Optional.of(clienteExistente));
         //se simula que ya existe un cliente con el email duplicado, por eso devuelve 1, quiere decir que hay un duplicado de email, dni o telefono
         when(clienteRepository.countByEmailOrDniOrTelefonoAndId(eq("duplicado@gmail.com"), eq("12345678"), eq("2964123456"), eq("1"))).thenReturn(1L);
 
@@ -264,6 +264,236 @@ class ClienteServiceTest {
         verify(clienteRepository, times(1)).findById("1");
         //se verifica que no se llamo al createorupdate
         verify(clienteRepository, never()).createOrUpdate(any());
+    }
+
+    @Test
+    void testDeleteCliente_Success() {
+        Cliente cliente = new Cliente();
+        cliente.setId("1");
+        cliente.setNombre("Pepe");
+        cliente.setApellido("Alonso");
+        cliente.setEmail("PepeAlonso@gmail.com");
+        cliente.setDni("12345678");
+        cliente.setTelefono("2964123456");
+
+        String id = "1";
+
+        when(clienteRepository.findById("1")).thenReturn(Optional.of(cliente));
+        doNothing().when(clienteRepository).delete(id);
+
+        clienteService.delete(id);
+
+        //verifica que se llamo al metodo delete del repositorio una vez
+        verify(clienteRepository, times(1)).delete(id);
+    }
+
+    @Test
+    void testDeleteCliente_IdVacio() {
+        String id = "";
+        //se espera que se lance una excepcion
+        assertThrows(IllegalArgumentException.class, () -> clienteService.delete(id));
+        //verifica que no se llamo al metodo delete del repositorio
+        verify(clienteRepository, never()).delete(anyString());
+    }
+
+    @Test
+    void testDeleteCliente_IdNulo() {
+        String id = null;
+        //se espera que se lance una excepcion
+        assertThrows(IllegalArgumentException.class, () -> clienteService.delete(id));
+        //verifica que no se llamo al metodo delete del repositorio
+        verify(clienteRepository, never()).delete(anyString());
+    }
+
+    @Test
+    void testDeleteCliente_NoExiste() {
+        String id = "1";
+        //se simula que no existe el cliente con id "1"
+        when(clienteRepository.findById(id)).thenReturn(Optional.empty());
+
+        //se espera que se lance una excepcion
+        assertThrows(IllegalArgumentException.class, () -> clienteService.delete(id));
+        //verifica que no se llamo al metodo delete del repositorio
+        verify(clienteRepository, never()).delete(id);
+    }
+
+    @Test
+    void testFindById_Success() {
+        String id = "1";
+        Cliente cliente = new Cliente();
+        cliente.setId(id);
+        cliente.setNombre("Pepe");
+        cliente.setApellido("Alonso");
+        cliente.setEmail("PepeAlonso@gmail.com");
+        cliente.setDni("12345678");
+        cliente.setTelefono("2964123456");
+        //se simula que existe el cliente con id "1"
+        when(clienteRepository.findById(id)).thenReturn(Optional.of(cliente));
+        
+        Cliente resultado = clienteService.findById(id);
+
+        verify(clienteRepository, times(1)).findById(id);
+        assertNotNull(resultado);
+        assertEquals("12345678", resultado.getDni());
+    }
+
+    @Test
+    void testFindById_IdVacio() {
+        String id = "";
+        //se espera que se lance una excepcion
+        assertThrows(IllegalArgumentException.class, () -> clienteService.findById(id));
+        //verifica que no se llamo al metodo findbyid del repositorio
+        verify(clienteRepository, never()).findById(anyString());
+    }
+
+    @Test
+    void testFindById_IdNulo() {
+        String id = null;
+        //se espera que se lance una excepcion
+        assertThrows(IllegalArgumentException.class, () -> clienteService.findById(id));
+        //verifica que no se llamo al metodo findbyid del repositorio
+        verify(clienteRepository, never()).findById(anyString());
+    }
+
+    @Test
+    void testFindById_NoExiste() {
+        String id = "1";
+        //se simula que no existe el cliente con id "1"
+        when(clienteRepository.findById(id)).thenReturn(Optional.empty());
+
+        //se espera que se lance una excepcion
+        assertThrows(IllegalArgumentException.class, () -> clienteService.findById(id));
+        //verifica que no se llamo al metodo findbyid del repositorio
+        verify(clienteRepository, times(1)).findById(id);
+    }
+
+    // Tests para findByNombre
+    @Test
+    void testFindByNombre_Success() {
+        String nombre = "Pepe";
+        Cliente cliente = new Cliente();
+        cliente.setNombre(nombre);
+        when(clienteRepository.findByNombre(nombre)).thenReturn(java.util.List.of(cliente));
+
+        var resultado = clienteService.findByNombre(nombre);
+
+        verify(clienteRepository, times(1)).findByNombre(nombre);
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals(nombre, resultado.get(0).getNombre());
+    }
+
+    @Test
+    void testFindByNombre_NombreVacio() {
+        String nombre = "";
+        assertThrows(IllegalArgumentException.class, () -> clienteService.findByNombre(nombre));
+        verify(clienteRepository, never()).findByNombre(anyString());
+    }
+
+    @Test
+    void testFindByNombre_NombreNulo() {
+        String nombre = null;
+        assertThrows(IllegalArgumentException.class, () -> clienteService.findByNombre(nombre));
+        verify(clienteRepository, never()).findByNombre(anyString());
+    }
+
+    // Tests para findByApellido
+    @Test
+    void testFindByApellido_Success() {
+        String apellido = "Alonso";
+        Cliente cliente = new Cliente();
+        cliente.setApellido(apellido);
+        when(clienteRepository.findByApellido(apellido)).thenReturn(java.util.List.of(cliente));
+
+        var resultado = clienteService.findByApellido(apellido);
+
+        verify(clienteRepository, times(1)).findByApellido(apellido);
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals(apellido, resultado.get(0).getApellido());
+    }
+
+    @Test
+    void testFindByApellido_ApellidoVacio() {
+        String apellido = "";
+        assertThrows(IllegalArgumentException.class, () -> clienteService.findByApellido(apellido));
+        verify(clienteRepository, never()).findByApellido(anyString());
+    }
+
+    @Test
+    void testFindByApellido_ApellidoNulo() {
+        String apellido = null;
+        assertThrows(IllegalArgumentException.class, () -> clienteService.findByApellido(apellido));
+        verify(clienteRepository, never()).findByApellido(anyString());
+    }
+
+    // Tests para findByEmail
+    @Test
+    void testFindByEmail_Success() {
+        String email = "pepealonso@gmail.com";
+        Cliente cliente = new Cliente();
+        cliente.setEmail(email);
+        when(clienteRepository.findByEmail(email)).thenReturn(java.util.List.of(cliente));
+
+        var resultado = clienteService.findByEmail(email);
+
+        verify(clienteRepository, times(1)).findByEmail(email);
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals(email, resultado.get(0).getEmail());
+    }
+
+    @Test
+    void testFindByEmail_EmailVacio() {
+        String email = "";
+        assertThrows(IllegalArgumentException.class, () -> clienteService.findByEmail(email));
+        verify(clienteRepository, never()).findByEmail(anyString());
+    }
+
+    @Test
+    void testFindByEmail_EmailInvalido() {
+        String email = "pepealonsogmail.com";
+        assertThrows(IllegalArgumentException.class, () -> clienteService.findByEmail(email));
+        verify(clienteRepository, never()).findByEmail(anyString());
+    }
+
+    // Tests para findByTelefono
+    @Test
+    void testFindByTelefono_Success() {
+        String telefono = "2964123456";
+        Cliente cliente = new Cliente();
+        cliente.setTelefono(telefono);
+        when(clienteRepository.findByTelefono(telefono)).thenReturn(java.util.List.of(cliente));
+
+        var resultado = clienteService.findByTelefono(telefono);
+
+        verify(clienteRepository, times(1)).findByTelefono(telefono);
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals(telefono, resultado.get(0).getTelefono());
+    }
+
+    @Test
+    void testFindByTelefono_TelefonoVacio() {
+        String telefono = "";
+        assertThrows(IllegalArgumentException.class, () -> clienteService.findByTelefono(telefono));
+        verify(clienteRepository, never()).findByTelefono(anyString());
+    }
+
+    @Test
+    void testFindByTelefono_TelefonoInvalido() {
+        String telefono = "abc123";
+        assertThrows(IllegalArgumentException.class, () -> clienteService.findByTelefono(telefono));
+        verify(clienteRepository, never()).findByTelefono(anyString());
+    }
+
+    @Test
+    void testFindByTelefono_TelefonoSoloCeros() {
+        String telefono = "0000000";
+        // Simula que pasa el regex pero es solo ceros
+        when(clienteRepository.findByTelefono(telefono)).thenReturn(java.util.List.of());
+        assertThrows(IllegalArgumentException.class, () -> clienteService.findByTelefono(telefono));
+        verify(clienteRepository, never()).findByTelefono(anyString());
     }
 }
 

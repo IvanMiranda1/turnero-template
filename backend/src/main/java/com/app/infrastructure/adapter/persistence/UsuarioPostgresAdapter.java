@@ -1,6 +1,7 @@
 package com.app.infrastructure.adapter.persistence;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.app.domain.model.Rol;
 import org.springframework.stereotype.Component;
@@ -24,12 +25,12 @@ public class UsuarioPostgresAdapter implements UsuarioRepository {
         UsuarioEntity savedEntity = usuarioJpaRepository.save(entity);
         return toDomain(savedEntity);   
     }
-    
+
     @Override
-    public Usuario findById(String id) {
+    public Optional<Usuario> findById(String id) {
+        // No hace falta usar .orElse(null) ya que ahora el metodo devuelve Optional<Usuario>
         return usuarioJpaRepository.findById(id)
-                .map(this::toDomain)
-                .orElse(null);
+                .map(this::toDomain);
     }
 
     @Override

@@ -86,14 +86,24 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioDTOs);
     }
 
+//    @GetMapping("/id")
+//    public ResponseEntity<UsuarioDTO> findById(String id) {
+//        Usuario usuario = usuarioService.findById(id);
+//        if (usuario == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        UsuarioDTO usuarioDTO = toDTO(usuario);
+//        return ResponseEntity.ok(usuarioDTO);
+//    }
     @GetMapping("/id")
     public ResponseEntity<UsuarioDTO> findById(String id) {
-        Usuario usuario = usuarioService.findById(id);
-        if (usuario == null) {
+        try {
+            Usuario usuario = usuarioService.findById(id);
+            UsuarioDTO usuarioDTO = toDTO(usuario);
+            return ResponseEntity.ok(usuarioDTO);
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
-        UsuarioDTO usuarioDTO = toDTO(usuario);
-        return ResponseEntity.ok(usuarioDTO);
     }
 
     @DeleteMapping("/delete")

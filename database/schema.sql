@@ -45,7 +45,7 @@ CREATE TABLE usuario(
 CREATE TABLE usuarioAuth(
     id UUID PRIMARY KEY,
     password VARCHAR(255) NOT NULL,
-    CONSTRAINT fk_usuario_auth_usuario FOREIGN KEY (fk_usuario) REFERENCES usuario(id)
+    CONSTRAINT fk_usuario_auth_usuario FOREIGN KEY(id) REFERENCES usuario(id)
 );
 
 -- Creación de la tabla de turnos con claves foráneas a cliente, usuario, servicio y estado_turno

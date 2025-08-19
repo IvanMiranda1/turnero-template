@@ -1,5 +1,7 @@
 package com.app.application.usecase;
 
+import java.security.PublicKey;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
@@ -73,6 +75,16 @@ public class EstadoTurnoService {
         estadoTurnoRepository.delete(id);
     }
 
+    public List<EstadoTurno> findAll() {
+        return estadoTurnoRepository.findAll();
+    }
+
+    public List<EstadoTurno> findByNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre es obligatorio para buscar.");
+        }
+        return estadoTurnoRepository.findByNombre(nombre);
+    }
 
     //metodo aux
      public static String capitalizar(String texto) {

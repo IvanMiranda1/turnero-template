@@ -28,6 +28,7 @@ public class UsuarioEntity {
     private String apellido;
     private String dni;
     private String email;
+    @Column(name = "fk_rol")
     private String  rol; // uso un string para el rol, en lugar de Rol como tipo de dato
     private LocalDate fecha_creacion;
     private LocalDateTime ultima_sesion;

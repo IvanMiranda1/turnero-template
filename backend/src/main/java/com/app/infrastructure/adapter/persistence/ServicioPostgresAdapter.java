@@ -1,6 +1,7 @@
 package com.app.infrastructure.adapter.persistence;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -26,10 +27,9 @@ public class ServicioPostgresAdapter implements ServicioRepository {
     }
 
     @Override
-    public Servicio findById(String id) {
+    public Optional<Servicio> findById(String id) {
         return servicioJpaRepository.findById(id)
-                .map(this::toDomain)
-                .orElse(null);
+                .map(this::toDomain);
     }
 
     @Override
@@ -51,6 +51,16 @@ public class ServicioPostgresAdapter implements ServicioRepository {
                 .stream()
                 .map(this::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Long countByNombre(String nombre) {
+        return servicioJpaRepository.countByNombre(nombre);
+    }
+
+    @Override
+    public Long TurnosAsociados(String idServicio) {
+        return servicioJpaRepository.TurnosAsociados(idServicio);
     }
     
     //metodos aux

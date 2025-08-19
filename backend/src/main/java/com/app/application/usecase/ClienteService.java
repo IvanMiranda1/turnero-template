@@ -20,13 +20,12 @@ public class ClienteService {
     public Cliente create(Cliente cliente) {
         //validaciones de campos obligatorios y formato correcto
         validarCamposDelCliente(cliente);
-        //capitalizacion de nombre y apellidos
         capitalizacionDeCliente(cliente);
-
+        //validar unicidad de email, dni y telefono
         if (clienteRepository.countByEmailOrDniOrTelefonoAndId(cliente.getEmail(), cliente.getDni(), cliente.getTelefono(), null) > 0) {
             throw new IllegalArgumentException("Ya existe un cliente con ese email, DNI o teléfono.");
         }
-
+        //crear cliente
         return clienteRepository.createOrUpdate(cliente);
     }
 

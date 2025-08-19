@@ -20,5 +20,6 @@ public class EstadoTurnoEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
     private String id;
+    @Column(name = "nombre_estado")
     private String nombre;
 }

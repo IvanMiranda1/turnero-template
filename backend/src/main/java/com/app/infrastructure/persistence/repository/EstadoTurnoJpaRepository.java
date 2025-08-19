@@ -15,6 +15,6 @@ public interface EstadoTurnoJpaRepository extends JpaRepository<EstadoTurnoEntit
     @Query("SELECT COUNT(e) FROM EstadoTurnoEntity e WHERE e.nombre = ?1")
     Long countByNombre(String nombre);
     
-    @Query("SELECT COUNT(t) FROM TurnoEntity t WHERE t.estadoTurno.id = ?1")
+    @Query("SELECT COUNT(t) FROM TurnoEntity t WHERE t.fk_estado = ?1")
     Long existUsoDelEstado(String idEstadoTurno);
 }

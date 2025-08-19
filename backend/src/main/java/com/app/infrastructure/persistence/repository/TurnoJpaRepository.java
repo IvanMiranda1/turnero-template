@@ -16,4 +16,6 @@ public interface TurnoJpaRepository extends JpaRepository<TurnoEntity, String> {
 
     @Query("SELECT t FROM TurnoEntity t WHERE t.fk_usuario = ?1")
     List<TurnoEntity> findByFkUsuario(String fkUsuario);
+
+    
 }

@@ -21,6 +21,7 @@ public class ServicioEntity {
     @Column(updatable = false, nullable = false)
     private String id;
     private String nombre;
+    @Column(name = "duracion_estimada_minutos")
     private Integer duracion_estimada; // minutos
     private float precio;
     private String detalle;

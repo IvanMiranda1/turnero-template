@@ -13,6 +13,5 @@ public interface UsuarioJpaRepository extends JpaRepository<UsuarioEntity, Strin
     @Query("SELECT u FROM UsuarioEntity u WHERE u.nombre LIKE %?1%")
     List<UsuarioEntity> findByNombre(String nombre);
     @Query("SELECT u FROM UsuarioEntity u WHERE u.apellido LIKE %?1%")
-    List<UsuarioEntity> findByApellido(String apellido); 
-    
+    List<UsuarioEntity> findByApellido(String apellido);
 }

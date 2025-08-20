@@ -71,25 +71,22 @@ public class UsuarioPostgresAdapter implements UsuarioRepository {
 
     // Métodos auxiliares de mapeo
     private UsuarioEntity toEntity(Usuario usuario) {
-        // Busca la entidad Rol por su ID antes de mapear
-        RolEntity rolEntity = rolJpaRepository.findById(usuario.getRol().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Rol no encontrado con ID: " + usuario.getRol().getId()));
-
         return new UsuarioEntity(
                 usuario.getId(),
                 usuario.getNombre(),
                 usuario.getApellido(),
                 usuario.getDni(),
                 usuario.getEmail(),
-                rolEntity,
+                usuario.getRol().getId(),
                 usuario.getFecha_creacion(),
                 usuario.getUltima_sesion()
         );
     }
 
     private Usuario toDomain(UsuarioEntity entity) {
-        // Mapea la entidad RolEntity a la clase de dominio Rol
-        Rol rol = new Rol(entity.getRol().getId(), entity.getRol().getNombre());
+        RolEntity rolEntity = rolJpaRepository.findById(entity.getFk_rol())
+                .orElseThrow(() -> new IllegalArgumentException("Rol not found for id"));
+        Rol rol = new Rol(rolEntity.getId(), rolEntity.getNombre());
         return new Usuario(
                 entity.getId(),
                 entity.getNombre(),

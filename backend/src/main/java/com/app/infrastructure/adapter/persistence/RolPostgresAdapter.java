@@ -49,6 +49,8 @@ public class RolPostgresAdapter implements RolRepository {
                 .toList();
     }
 
+    
+
     // Métodos auxiliares de mapeo
     private RolEntity toEntity(Rol rol) {
         return new RolEntity(rol.getId(), rol.getNombre());

@@ -8,20 +8,20 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.app.domain.model.Cliente;
-import com.app.domain.port.ClienteRepository;
-
-import com.app.application.usecase.ClienteService;
+import com.app.cliente.Cliente;
+import com.app.cliente.ClienteService;
+import com.app.cliente.ClienteJpaRepository;
+import com.app.cliente.ClienteEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
 class ClienteServiceTest {
     @Mock
-    private ClienteRepository clienteRepository;
-    
+    private ClienteJpaRepository clienteRepository; // ahora se mockea directamente el JpaRepository
+
     @InjectMocks
-    private ClienteService clienteService;
+    private ClienteService clienteService; // servicio nuevo que usa ClienteJpaRepository
 
     @BeforeEach
     void setUp() {
@@ -38,8 +38,8 @@ class ClienteServiceTest {
         cliente.setTelefono("2964123456");
 
         //se prepara el comportamiento del mock, cuando llame al clienteService.create, los llamados al repositorio tendran este comportamiento
-        when(clienteRepository.countByEmailOrDniOrTelefonoAndId(anyString(), anyString(), anyString(), anyString())).thenReturn(0L);
-        when(clienteRepository.createOrUpdate(any(Cliente.class))).thenReturn(cliente);
+    when(clienteRepository.countByEmailOrDniOrTelefonoAndId(anyString(), anyString(), anyString(), anyString())).thenReturn(0L);
+    when(clienteRepository.save(any(ClienteEntity.class))).thenAnswer(inv -> inv.getArgument(0));
         //si quisiera que el createorupdate retorne un error colocaria .thenThrow(new RuntimeException("Error al crear cliente"));
 
         Cliente resultado = clienteService.create(cliente);
@@ -47,7 +47,7 @@ class ClienteServiceTest {
         // Verifica que se haya llamado al método countByEmailOrDniOrTelefono del repositorio
         verify(clienteRepository, times(1)).countByEmailOrDniOrTelefonoAndId(cliente.getEmail(), cliente.getDni(), cliente.getTelefono(), null);
         // Verifica que se haya llamado al método createOrUpdate del repositorio
-        verify(clienteRepository, times(1)).createOrUpdate(cliente);
+    verify(clienteRepository, times(1)).save(any(ClienteEntity.class));
 
         assertNotNull(resultado);
         assertEquals("Pepe", resultado.getNombre());
@@ -66,7 +66,7 @@ class ClienteServiceTest {
         cliente.setTelefono("2964123456");
 
         assertThrows(IllegalArgumentException.class, () -> clienteService.create(cliente)); // Debe lanzar excepción
-        verify(clienteRepository, never()).createOrUpdate(any());// Verifica que no se haya llamado al método createOrUpdate del repositorio
+    verify(clienteRepository, never()).save(any());// Verifica que no se haya llamado al método save del repositorio
 
     }
     @Test
@@ -79,7 +79,7 @@ class ClienteServiceTest {
         cliente.setTelefono("2964123456");
 
         assertThrows(IllegalArgumentException.class, () -> clienteService.create(cliente)); // Debe lanzar excepción
-        verify(clienteRepository, never()).createOrUpdate(any());// Verifica que no se haya llamado al método createOrUpdate del repositorio
+    verify(clienteRepository, never()).save(any());// Verifica que no se haya llamado al método save del repositorio
     }
     @Test
     void testCreateCliente_CampoObligatorioVacio_Email() {
@@ -91,7 +91,7 @@ class ClienteServiceTest {
         cliente.setTelefono("2964123456");
 
         assertThrows(IllegalArgumentException.class, () -> clienteService.create(cliente)); // Debe lanzar excepción
-        verify(clienteRepository, never()).createOrUpdate(any());// Verifica que no se haya llamado al método createOrUpdate del repositorio
+    verify(clienteRepository, never()).save(any());// Verifica que no se haya llamado al método save del repositorio
     }
     @Test
     void testCreateCliente_FormatoDeEmail() {
@@ -103,7 +103,7 @@ class ClienteServiceTest {
         cliente.setTelefono("2964123456");
 
         assertThrows(IllegalArgumentException.class, () -> clienteService.create(cliente)); // Debe lanzar excepción
-        verify(clienteRepository, never()).createOrUpdate(any());// Verifica que no se haya llamado al método createOrUpdate del repositorio
+    verify(clienteRepository, never()).save(any());// Verifica que no se haya llamado al método save del repositorio
     }
     @Test
     void testCreateCliente_CampoObligatorioVacio_Dni() {
@@ -115,7 +115,7 @@ class ClienteServiceTest {
         cliente.setTelefono("2964123456");
 
         assertThrows(IllegalArgumentException.class, () -> clienteService.create(cliente)); // Debe lanzar excepción
-        verify(clienteRepository, never()).createOrUpdate(any());// Verifica que no se haya llamado al método createOrUpdate del repositorio
+    verify(clienteRepository, never()).save(any());// Verifica que no se haya llamado al método save del repositorio
     }
     @Test
     void testCreateCliente_CampoObligatorioVacio_Telefono() {
@@ -127,7 +127,7 @@ class ClienteServiceTest {
         cliente.setTelefono("");
 
         assertThrows(IllegalArgumentException.class, () -> clienteService.create(cliente)); // Debe lanzar excepción
-        verify(clienteRepository, never()).createOrUpdate(any());// Verifica que no se haya llamado al método createOrUpdate del repositorio
+    verify(clienteRepository, never()).save(any());// Verifica que no se haya llamado al método save del repositorio
     }
 
     //Test de update
@@ -152,9 +152,9 @@ class ClienteServiceTest {
         clienteModificado.setTelefono("2964123456");
 
         //se configuran mocks del update
-        when(clienteRepository.findById("1")).thenReturn(Optional.of(clienteExistente)); // se simula que existe el cliente con id "1"
-        when(clienteRepository.countByEmailOrDniOrTelefonoAndId("JuanPerez@gmail.com", "12345678", "2964123456", "1")).thenReturn(0L);
-        when(clienteRepository.createOrUpdate(clienteModificado)).thenReturn(clienteModificado);
+    when(clienteRepository.findById("1")).thenReturn(Optional.of(new ClienteEntity("1","Pepito","Rodriguez","PepitoRodriguez@gmail.com","2964123456","12345678")));
+    when(clienteRepository.countByEmailOrDniOrTelefonoAndId("JuanPerez@gmail.com", "12345678", "2964123456", "1")).thenReturn(0L);
+    when(clienteRepository.save(any(ClienteEntity.class))).thenReturn(new ClienteEntity("1","Juan","Perez","JuanPerez@gmail.com","2964123456","12345678"));
         
 
         Cliente clienteActualizado = clienteService.update(clienteModificado);
@@ -164,7 +164,7 @@ class ClienteServiceTest {
         verify(clienteRepository, times(1)).countByEmailOrDniOrTelefonoAndId(
             "JuanPerez@gmail.com", "12345678", "2964123456", "1"
         );
-        verify(clienteRepository, times(1)).createOrUpdate(clienteModificado);
+    verify(clienteRepository, times(1)).save(any(ClienteEntity.class));
 
 
         assertNotNull(clienteActualizado);
@@ -184,7 +184,7 @@ class ClienteServiceTest {
         cliente.setTelefono("2964123456");
         
         assertThrows(IllegalArgumentException.class, () -> clienteService.update(cliente));
-        verify(clienteRepository, never()).createOrUpdate(any());
+    verify(clienteRepository, never()).save(any());
         verify(clienteRepository, never()).findById(anyString());
     }
 
@@ -199,14 +199,14 @@ class ClienteServiceTest {
         cliente.setTelefono("2964123456");
 
         //se simula que no existe el cliente con id "1"
-        when(clienteRepository.findById("1")).thenReturn(null);
+    when(clienteRepository.findById("1")).thenReturn(null);
 
         //se espera que se lance una excepcion
         assertThrows(NullPointerException.class, () -> clienteService.update(cliente));
         //se verifica que se llamo una vez al findbyid (que da error), y nunca se llega a llamar al createorupdate
         verify(clienteRepository, times(1)).findById("1");
         verify(clienteRepository, never()).countByEmailOrDniOrTelefonoAndId(any(), any(), any(), any());
-        verify(clienteRepository, never()).createOrUpdate(any());
+    verify(clienteRepository, never()).save(any());
     }
 
     @Test
@@ -229,7 +229,7 @@ class ClienteServiceTest {
         clienteModificado.setTelefono("2964123456");
 
         //findbyid devuelve el cliente existente
-        when(clienteRepository.findById("1")).thenReturn(Optional.of(clienteExistente));
+    when(clienteRepository.findById("1")).thenReturn(Optional.of(new ClienteEntity("1","Pepito","Rodriguez","pepito@gmail.com","2964123456","12345678")));
         //se simula que ya existe un cliente con el email duplicado, por eso devuelve 1, quiere decir que hay un duplicado de email, dni o telefono
         when(clienteRepository.countByEmailOrDniOrTelefonoAndId(eq("duplicado@gmail.com"), eq("12345678"), eq("2964123456"), eq("1"))).thenReturn(1L);
 
@@ -257,13 +257,13 @@ class ClienteServiceTest {
         clienteModificado.setTelefono("2964123456");
         
         when(clienteRepository.findById("1"))
-            .thenReturn(Optional.of(clienteExistente));
+            .thenReturn(Optional.of(new ClienteEntity("1","Pepito","Rodriguez","pepito@gmail.com","2964123456","12345678")));
         assertThrows(IllegalArgumentException.class,
             () -> clienteService.update(clienteModificado));
         //se verifica que se llamo al findbyid
         verify(clienteRepository, times(1)).findById("1");
         //se verifica que no se llamo al createorupdate
-        verify(clienteRepository, never()).createOrUpdate(any());
+    verify(clienteRepository, never()).save(any());
     }
 
     @Test
@@ -278,13 +278,13 @@ class ClienteServiceTest {
 
         String id = "1";
 
-        when(clienteRepository.findById("1")).thenReturn(Optional.of(cliente));
-        doNothing().when(clienteRepository).delete(id);
+    when(clienteRepository.findById("1")).thenReturn(Optional.of(new ClienteEntity("1","Pepe","Alonso","PepeAlonso@gmail.com","2964123456","12345678")));
+    doNothing().when(clienteRepository).deleteById(id);
 
         clienteService.delete(id);
 
         //verifica que se llamo al metodo delete del repositorio una vez
-        verify(clienteRepository, times(1)).delete(id);
+    verify(clienteRepository, times(1)).deleteById(id);
     }
 
     @Test
@@ -293,7 +293,7 @@ class ClienteServiceTest {
         //se espera que se lance una excepcion
         assertThrows(IllegalArgumentException.class, () -> clienteService.delete(id));
         //verifica que no se llamo al metodo delete del repositorio
-        verify(clienteRepository, never()).delete(anyString());
+    verify(clienteRepository, never()).deleteById(anyString());
     }
 
     @Test
@@ -302,7 +302,7 @@ class ClienteServiceTest {
         //se espera que se lance una excepcion
         assertThrows(IllegalArgumentException.class, () -> clienteService.delete(id));
         //verifica que no se llamo al metodo delete del repositorio
-        verify(clienteRepository, never()).delete(anyString());
+    verify(clienteRepository, never()).deleteById(anyString());
     }
 
     @Test
@@ -314,7 +314,7 @@ class ClienteServiceTest {
         //se espera que se lance una excepcion
         assertThrows(IllegalArgumentException.class, () -> clienteService.delete(id));
         //verifica que no se llamo al metodo delete del repositorio
-        verify(clienteRepository, never()).delete(id);
+    verify(clienteRepository, never()).deleteById(id);
     }
 
     @Test
@@ -328,7 +328,7 @@ class ClienteServiceTest {
         cliente.setDni("12345678");
         cliente.setTelefono("2964123456");
         //se simula que existe el cliente con id "1"
-        when(clienteRepository.findById(id)).thenReturn(Optional.of(cliente));
+    when(clienteRepository.findById(id)).thenReturn(Optional.of(new ClienteEntity("1","Pepe","Alonso","PepeAlonso@gmail.com","2964123456","12345678")));
         
         Cliente resultado = clienteService.findById(id);
 
@@ -373,7 +373,7 @@ class ClienteServiceTest {
         String nombre = "Pepe";
         Cliente cliente = new Cliente();
         cliente.setNombre(nombre);
-        when(clienteRepository.findByNombre(nombre)).thenReturn(java.util.List.of(cliente));
+    when(clienteRepository.findByNombre(nombre)).thenReturn(java.util.List.of(new ClienteEntity("1","Pepe","Alonso","pepealonso@gmail.com","2964123456","12345678")));
 
         var resultado = clienteService.findByNombre(nombre);
 
@@ -403,7 +403,7 @@ class ClienteServiceTest {
         String apellido = "Alonso";
         Cliente cliente = new Cliente();
         cliente.setApellido(apellido);
-        when(clienteRepository.findByApellido(apellido)).thenReturn(java.util.List.of(cliente));
+    when(clienteRepository.findByApellido(apellido)).thenReturn(java.util.List.of(new ClienteEntity("1","Pepe","Alonso","pepealonso@gmail.com","2964123456","12345678")));
 
         var resultado = clienteService.findByApellido(apellido);
 
@@ -433,7 +433,7 @@ class ClienteServiceTest {
         String email = "pepealonso@gmail.com";
         Cliente cliente = new Cliente();
         cliente.setEmail(email);
-        when(clienteRepository.findByEmail(email)).thenReturn(java.util.List.of(cliente));
+    when(clienteRepository.findByEmail(email)).thenReturn(java.util.List.of(new ClienteEntity("1","Pepe","Alonso","pepealonso@gmail.com","2964123456","12345678")));
 
         var resultado = clienteService.findByEmail(email);
 
@@ -463,7 +463,7 @@ class ClienteServiceTest {
         String telefono = "2964123456";
         Cliente cliente = new Cliente();
         cliente.setTelefono(telefono);
-        when(clienteRepository.findByTelefono(telefono)).thenReturn(java.util.List.of(cliente));
+    when(clienteRepository.findByTelefono(telefono)).thenReturn(java.util.List.of(new ClienteEntity("1","Pepe","Alonso","pepealonso@gmail.com","2964123456","12345678")));
 
         var resultado = clienteService.findByTelefono(telefono);
 
@@ -491,7 +491,7 @@ class ClienteServiceTest {
     void testFindByTelefono_TelefonoSoloCeros() {
         String telefono = "0000000";
         // Simula que pasa el regex pero es solo ceros
-        when(clienteRepository.findByTelefono(telefono)).thenReturn(java.util.List.of());
+    when(clienteRepository.findByTelefono(telefono)).thenReturn(java.util.List.of());
         assertThrows(IllegalArgumentException.class, () -> clienteService.findByTelefono(telefono));
         verify(clienteRepository, never()).findByTelefono(anyString());
     }

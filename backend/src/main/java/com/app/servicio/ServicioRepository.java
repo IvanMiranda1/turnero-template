@@ -13,6 +13,6 @@ public interface ServicioRepository extends JpaRepository<Servicio, UUID> {
     @Query("SELECT COUNT(s) FROM Servicio s WHERE s.nombre = ?1")
     Long countByNombre(String nombre);
 
-    @Query("SELECT COUNT(t) FROM TurnoEntity t WHERE t.fk_servicio = ?1")
-    Long TurnosAsociados(UUID idServicio);
+    @Query("SELECT COUNT(t) FROM Turno t JOIN t.servicio serv WHERE serv.id = ?1")
+    Long turnosAsociados(UUID idServicio);
 }

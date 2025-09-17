@@ -1,6 +1,8 @@
 package com.app.cliente;
 
 
+import com.app.utils.validation.NoSoloCeros;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Null;
@@ -38,6 +40,7 @@ public class ClienteDTO {
 
     @NotBlank(groups = {OnCreate.class, OnUpdate.class}, message = "Teléfono requerido")
     @Pattern(groups = {OnCreate.class, OnUpdate.class}, regexp = "^\\d{12}$", message = "Teléfono puede tener 12 dígitos en total")
+    @NoSoloCeros
     private String telefono;
 
     @NotBlank(groups = {OnCreate.class, OnUpdate.class}, message = "DNI requerido") 

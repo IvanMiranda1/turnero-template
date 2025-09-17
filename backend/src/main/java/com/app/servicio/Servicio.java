@@ -1,5 +1,7 @@
 package com.app.servicio;
 
+import java.util.UUID;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +25,7 @@ public class Servicio {
     @Id
     @GeneratedValue
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "UUID")
-    private String id;
+    private UUID id;
     private String nombre;
     @Column(name = "duracion_estimada")
     private Integer duracionEstimada; //minutos

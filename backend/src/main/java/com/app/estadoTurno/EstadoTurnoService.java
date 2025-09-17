@@ -18,7 +18,7 @@ public class EstadoTurnoService {
     public EstadoTurnoDTO create(EstadoTurnoDTO dto) {        
         dto.setNombre(DataNormalizer.capitalizarPalabras(dto.getNombre()));
         //validarFormatoNombre(dto.getNombre());
-        if (repo.existByNombre(dto.getNombre()) > 0) {
+        if (repo.countByNombre(dto.getNombre()) > 0) {
             throw new IllegalArgumentException("Ya existe un estado de turno con ese nombre.");
         }
         EstadoTurno estadoTurno = mapper.toEntity(dto);
@@ -31,8 +31,7 @@ public class EstadoTurnoService {
             .orElseThrow( () -> new IllegalArgumentException("No existe un estado de turno con el ID proporcionado."));
         dto.setNombre(DataNormalizer.capitalize(dto.getNombre()));
         // Solo validar unicidad si cambió el nombre
-        if (!dto.getNombre().equals(existente.getNombre()) &&
-            repo.existByNombre(dto.getNombre()) > 0) {
+        if (!existente.getNombre().equalsIgnoreCase(dto.getNombre()) && repo.countByNombre(dto.getNombre()) > 0) {
             throw new IllegalArgumentException("Ya existe un estado de turno con ese nombre.");
         }
         EstadoTurno entity = mapper.toEntity(dto);
@@ -51,7 +50,7 @@ public class EstadoTurnoService {
             throw new IllegalArgumentException("No existe un estado de turno con el ID proporcionado.");
         }
         // Verificar si el estado de turno está en uso por algún turno
-        if (repo.existUsoDelEstado(id) > 0) {
+        if (repo.countByEstadoTurnoEnUso(id) > 0) {
             throw new IllegalArgumentException("No se puede eliminar el estado de turno porque está en uso.");
         }
         // Si pasa las validaciones, se procede a eliminar

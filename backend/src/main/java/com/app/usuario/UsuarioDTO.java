@@ -3,6 +3,8 @@ package com.app.usuario;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.app.usuario.Usuario.Proveedor;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Null;
@@ -45,6 +47,8 @@ public class UsuarioDTO {
     @NotBlank(groups = {OnCreate.class, OnUpdate.class}, message = "Rol requerido")
     @Pattern(groups = OnUpdate.class, regexp = "^[0-9a-fA-F-]{36}$", message = "Id UUID inválido")
     private String fkRol;
+
+    private Proveedor proveedor;
 
     @Null(groups = OnCreate.class, message = "No enviar fecha_creacion al crear")
     private LocalDate fechaCreacion;

@@ -44,6 +44,10 @@ public class TurnoService {
         return repo.findByFechaTurno(fechaTurno).stream().map(mapper::toDTO).toList();
     }
 
+    public List<TurnoDTO> findByEstado(String estado) {
+        return repo.findByEstado(estado).stream().map(mapper::toDTO).toList();
+    }
+
     public List<TurnoDTO> findByClienteId(UUID clienteId) {
         return repo.findByFkCliente(clienteId).stream().map(mapper::toDTO).toList();
     }// ejemplo, ver los turnos que ya tuvo un cliente

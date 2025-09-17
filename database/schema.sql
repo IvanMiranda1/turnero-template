@@ -37,6 +37,7 @@ CREATE TABLE usuario(
     apellido VARCHAR(255) NOT NULL,
     dni VARCHAR(8) NOT NULL UNIQUE,
     fk_rol UUID NOT NULL, -- Clave foránea a la tabla de roles
+    proovedor VARCHAR(100),
     fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ultima_sesion TIMESTAMP,
     CONSTRAINT fk_usuario_rol FOREIGN KEY (fk_rol) REFERENCES rol(id)
@@ -44,7 +45,7 @@ CREATE TABLE usuario(
 
 CREATE TABLE usuarioAuth(
     id UUID PRIMARY KEY,
-    password VARCHAR(255) NOT NULL,
+    passwordHash VARCHAR(255) NOT NULL,
     CONSTRAINT fk_usuario_auth_usuario FOREIGN KEY(id) REFERENCES usuario(id)
 );
 

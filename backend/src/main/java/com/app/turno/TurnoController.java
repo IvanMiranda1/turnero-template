@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.turno.TurnoDTO.OnCreate;
 import com.app.turno.TurnoDTO.OnUpdate;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
-@RequestMapping("/turnos")
+@RequestMapping("api/turnos")
 public class TurnoController {
     private final TurnoService service;
 
@@ -45,18 +48,23 @@ public class TurnoController {
         return ResponseEntity.ok(service.findByDate(date));
     }
 
+    @GetMapping("/estado") // localhost:8080/api/turnos/estado?param=Pendiente
+    public List<TurnoDTO> findByEstado(@RequestParam String param) {
+        return service.findByEstado(param);
+    }
+
     @GetMapping("/cliente")
     public ResponseEntity<List<TurnoDTO>> findByClienteId(UUID clienteId) {
         return ResponseEntity.ok(service.findByClienteId(clienteId));
     }
     
-    @GetMapping("/usuario")
-    public ResponseEntity<List<TurnoDTO>> findByUsuarioId(UUID usuarioId) {
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<TurnoDTO>> findByUsuarioId(@PathVariable UUID usuarioId) {
         return ResponseEntity.ok(service.findByUsuarioId(usuarioId));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

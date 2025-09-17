@@ -2,6 +2,8 @@ package com.app.usuario;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -30,8 +32,16 @@ public class Usuario {
     private String email;
     @Column(name = "fk_rol")
     private String  fkRol; // uso un string para el rol, en lugar de Rol como tipo de dato
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Proveedor proveedor;
     @Column(name = "fecha_creacion")
     private LocalDate fechaCreacion;
     @Column(name = "ultima_sesion")
     private LocalDateTime ultimaSesion;
+
+    public enum Proveedor {
+        LOCAL,
+        GOOGLE,
+    }
 }

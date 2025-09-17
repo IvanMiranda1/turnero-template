@@ -18,6 +18,15 @@ public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
     List<Cliente> findByTelefono(String telefono);
 
     //verificaciones de unicidad
-    @Query("SELECT COUNT(c) FROM Cliente c WHERE (c.email = ?1 OR c.dni = ?2 OR c.telefono = ?3) AND (:id IS NULL OR c.id <> ?4)")
+    // AND (?4 IS NULL OR c.id <> ?4) si id es null (creacion) no lo tiene en cuenta,
+    // si no es null y coincide con el id (edicion) lo excluye de la busqueda para evitar duplicados en la busqueda
+    @Query("SELECT COUNT(c) FROM Cliente c WHERE (c.email = ?1 OR c.dni = ?2 OR c.telefono = ?3) AND (?4 IS NULL OR c.id <> ?4)")
     Long countByEmailOrDniOrTelefonoAndId(String email, String dni, String telefono, UUID id);
+
+    @Query("SELECT COUNT(t) FROM Cliente c JOIN c.turnos t Join t.estadoTurno e WHERE c.id = ?1 AND e.nombre = 'Pendiente'")
+    Long turnosPendientes(UUID idCliente);
+    /***    al turno ya lo asocie con el mapping entonces no hace falta comprobar
+     *      nada porque me asegura que el turno que se esta comparando ya tiene una
+     *      relacion con el cliente  */
+
 }

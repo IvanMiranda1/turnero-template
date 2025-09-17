@@ -1,16 +1,11 @@
 package com.app.turnero;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,14 +13,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.app.application.usecase.EstadoTurnoService;
-import com.app.domain.port.EstadoTurnoRepository;
+import com.app.estadoTurno.EstadoTurno;
+import com.app.estadoTurno.EstadoTurnoDTO;
+import com.app.estadoTurno.EstadoTurnoMapper;
+import com.app.estadoTurno.EstadoTurnoRepository;
+import com.app.estadoTurno.EstadoTurnoService;
 
-import com.app.domain.model.EstadoTurno;
-
-public class EstadoTurnoServiceTest {
+class EstadoTurnoServiceTest {
     @Mock
     private EstadoTurnoRepository estadoTurnoRepository;
+
+    @Mock
+    private EstadoTurnoMapper estadoTurnoMapper;
 
     @InjectMocks
     private EstadoTurnoService estadoTurnoService;
@@ -34,172 +33,161 @@ public class EstadoTurnoServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
-    
+
     // Test crear estado de turno exitosamente
     @Test
     void testCreateEstadoTurnoSuccess() {
-        EstadoTurno estado = new EstadoTurno(null, "pendiente");
-        when(estadoTurnoRepository.existByNombre("Pendiente")).thenReturn(0L);
-        when(estadoTurnoRepository.createOrUpdate(any())).thenReturn(estado);
-        EstadoTurno creado = estadoTurnoService.create(estado);
+        EstadoTurnoDTO dto = new EstadoTurnoDTO(null, "pendiente");
+        EstadoTurno entity = new EstadoTurno(UUID.randomUUID(), "Pendiente");
+
+        when(estadoTurnoRepository.existsByNombre("Pendiente")).thenReturn(0L);
+        when(estadoTurnoMapper.toEntity(any(EstadoTurnoDTO.class))).thenReturn(entity);
+        when(estadoTurnoRepository.save(any(EstadoTurno.class))).thenReturn(entity);
+        when(estadoTurnoMapper.toDTO(any(EstadoTurno.class))).thenReturn(new EstadoTurnoDTO(entity.getId().toString(), "Pendiente"));
+
+        EstadoTurnoDTO creado = estadoTurnoService.create(dto);
+
+        assertNotNull(creado.getId());
         assertEquals("Pendiente", creado.getNombre());
-    }
-
-    // Test crear estado con ID existente lanza excepción
-    @Test
-    void testCreateEstadoTurnoWithIdThrows() {
-        EstadoTurno estado = new EstadoTurno("123", "pendiente");
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            estadoTurnoService.create(estado);
-        });
-        assertTrue(ex.getMessage().contains("No puede tener ID al crear"));
-    }
-
-    // Test crear estado con nombre vacío lanza excepción
-    @Test
-    void testCreateEstadoTurnoWithEmptyNameThrows() {
-        EstadoTurno estado = new EstadoTurno(null, " ");
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            estadoTurnoService.create(estado);
-        });
-        assertTrue(ex.getMessage().contains("No puede tener ID al crear"));
+        verify(estadoTurnoRepository).save(entity);
     }
 
     // Test crear estado con nombre duplicado lanza excepción
     @Test
     void testCreateEstadoTurnoNombreDuplicadoThrows() {
-        EstadoTurno estado = new EstadoTurno(null, "pendiente");
-        when(estadoTurnoRepository.existByNombre("Pendiente")).thenReturn(1L);
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            estadoTurnoService.create(estado);
+        EstadoTurnoDTO dto = new EstadoTurnoDTO(null, "pendiente");
+        when(estadoTurnoRepository.existsByNombre("Pendiente")).thenReturn(1L);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            estadoTurnoService.create(dto);
         });
-        assertTrue(ex.getMessage().contains("Ya existe un estado de turno"));
+
+        assertEquals("Ya existe un estado de turno con ese nombre.", exception.getMessage());
+        verify(estadoTurnoRepository, never()).save(any());
     }
 
     // Test update exitoso
     @Test
     void testUpdateEstadoTurnoSuccess() {
-        EstadoTurno existente = new EstadoTurno("1", "Pendiente");
-        EstadoTurno actualizado = new EstadoTurno("1", "finalizado");
-        when(estadoTurnoRepository.findById("1")).thenReturn(Optional.of(existente));
-        when(estadoTurnoRepository.existByNombre("Finalizado")).thenReturn(0L);
-        when(estadoTurnoRepository.createOrUpdate(any())).thenAnswer(i -> i.getArgument(0));
-        EstadoTurno result = estadoTurnoService.update(actualizado);
-        assertEquals("Finalizado", result.getNombre());
-    }
+        UUID id = UUID.randomUUID();
+        EstadoTurnoDTO dtoActualizado = new EstadoTurnoDTO(id.toString(), "finalizado");
+        EstadoTurno existente = new EstadoTurno(id, "Pendiente");
+        EstadoTurno actualizadoEntity = new EstadoTurno(id, "Finalizado");
 
-    // Test update sin ID lanza excepción
-    @Test
-    void testUpdateEstadoTurnoSinIdThrows() {
-        EstadoTurno estado = new EstadoTurno(null, "pendiente");
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            estadoTurnoService.update(estado);
-        });
-        assertTrue(ex.getMessage().contains("ID del estado de turno es obligatorio"));
+        when(estadoTurnoRepository.findById(id)).thenReturn(Optional.of(existente));
+        when(estadoTurnoRepository.unicidadByNombreConId("Finalizado", id)).thenReturn(0L);
+        when(estadoTurnoMapper.toEntity(dtoActualizado)).thenReturn(actualizadoEntity);
+        when(estadoTurnoRepository.save(actualizadoEntity)).thenReturn(actualizadoEntity);
+        when(estadoTurnoMapper.toDTO(actualizadoEntity)).thenReturn(new EstadoTurnoDTO(id.toString(), "Finalizado"));
+
+        EstadoTurnoDTO result = estadoTurnoService.update(dtoActualizado);
+
+        assertEquals("Finalizado", result.getNombre());
+        verify(estadoTurnoRepository).save(actualizadoEntity);
     }
 
     // Test update con ID inexistente lanza excepción
     @Test
     void testUpdateEstadoTurnoIdInexistenteThrows() {
-        EstadoTurno estado = new EstadoTurno("99", "pendiente");
-        when(estadoTurnoRepository.findById("99")).thenReturn(Optional.empty());
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            estadoTurnoService.update(estado);
+        UUID id = UUID.randomUUID();
+        EstadoTurnoDTO dto = new EstadoTurnoDTO(id.toString(), "pendiente");
+        when(estadoTurnoRepository.findById(id)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            estadoTurnoService.update(dto);
         });
-        assertTrue(ex.getMessage().contains("No existe un estado de turno"));
+
+        assertEquals("No existe un estado de turno con el ID proporcionado.", exception.getMessage());
+        verify(estadoTurnoRepository, never()).save(any());
     }
 
     // Test update con nombre duplicado lanza excepción
     @Test
     void testUpdateEstadoTurnoNombreDuplicadoThrows() {
-        EstadoTurno existente = new EstadoTurno("1", "Pendiente");
-        EstadoTurno actualizado = new EstadoTurno("1", "finalizado");
-        when(estadoTurnoRepository.findById("1")).thenReturn(Optional.of(existente));
-        when(estadoTurnoRepository.existByNombre("Finalizado")).thenReturn(1L);
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            estadoTurnoService.update(actualizado);
+        UUID id = UUID.randomUUID();
+        EstadoTurnoDTO dtoActualizado = new EstadoTurnoDTO(id.toString(), "finalizado");
+        EstadoTurno existente = new EstadoTurno(id, "Pendiente");
+
+        when(estadoTurnoRepository.findById(id)).thenReturn(Optional.of(existente));
+        when(estadoTurnoRepository.unicidadByNombreConId("Finalizado", id)).thenReturn(1L);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            estadoTurnoService.update(dtoActualizado);
         });
-        assertTrue(ex.getMessage().contains("Ya existe un estado de turno"));
-        verify(estadoTurnoRepository, never()).createOrUpdate(any());
+
+        assertEquals("Ya existe un estado de turno con ese nombre.", exception.getMessage());
+        verify(estadoTurnoRepository, never()).save(any());
     }
 
     // Test findById exitoso
     @Test
     void testFindByIdSuccess() {
-        EstadoTurno existente = new EstadoTurno("1", "Pendiente");
-        String id = "1";
+        UUID id = UUID.randomUUID();
+        EstadoTurno existente = new EstadoTurno(id, "Pendiente");
+        EstadoTurnoDTO dto = new EstadoTurnoDTO(id.toString(), "Pendiente");
 
-        when(estadoTurnoRepository.findById("1")).thenReturn(Optional.of(existente));
-        EstadoTurno result = estadoTurnoService.findById(id);
+        when(estadoTurnoRepository.findById(id)).thenReturn(Optional.of(existente));
+        when(estadoTurnoMapper.toDTO(existente)).thenReturn(dto);
+
+        EstadoTurnoDTO result = estadoTurnoService.findById(id);
 
         verify(estadoTurnoRepository, times(1)).findById(id);
         assertNotNull(result);
         assertEquals("Pendiente", result.getNombre());
     }
 
-    // Test findById con ID vacío lanza excepción
-    @Test
-    void testFindByIdEmptyThrows() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            estadoTurnoService.findById(" ");
-        });
-        assertTrue(ex.getMessage().contains("ID del estado de turno es obligatorio"));
-        verify(estadoTurnoRepository, never()).findById(" ");
-    }
-
     // Test findById con ID inexistente lanza excepción
     @Test
     void testFindByIdNotFoundThrows() {
-        when(estadoTurnoRepository.findById("99")).thenReturn(Optional.empty());
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            estadoTurnoService.findById("99");
+        UUID id = UUID.randomUUID();
+        when(estadoTurnoRepository.findById(id)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            estadoTurnoService.findById(id);
         });
-        assertTrue(ex.getMessage().contains("No existe un estado de turno"));
-        verify(estadoTurnoRepository).findById("99");
+
+        assertEquals("No existe un estado de turno con el ID proporcionado.", exception.getMessage());
+        verify(estadoTurnoRepository).findById(id);
     }
 
     // Test delete exitoso
     @Test
     void testDeleteSuccess() {
-        EstadoTurno existente = new EstadoTurno("1", "Pendiente");
-        when(estadoTurnoRepository.findById("1")).thenReturn(Optional.of(existente));
-        when(estadoTurnoRepository.existUsoDelEstado("1")).thenReturn(0L);
-        estadoTurnoService.delete("1");
-        verify(estadoTurnoRepository).delete("1");
-    }
+        UUID id = UUID.randomUUID();
+        when(estadoTurnoRepository.findById(id)).thenReturn(Optional.of(new EstadoTurno()));
+        when(estadoTurnoRepository.countByEstadoTurnoEnUso(id)).thenReturn(0L);
 
-    // Test delete con ID vacío lanza excepción
-    @Test
-    void testDeleteEmptyIdThrows() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            estadoTurnoService.delete(" ");
-        });
-        assertTrue(ex.getMessage().contains("ID del estado de turno es obligatorio"));
-        verify(estadoTurnoRepository, never()).delete(" ");
+        estadoTurnoService.delete(id);
+
+        verify(estadoTurnoRepository).deleteById(id);
     }
 
     // Test delete con ID inexistente lanza excepción
     @Test
     void testDeleteIdNotFoundThrows() {
-        when(estadoTurnoRepository.findById("99")).thenReturn(Optional.empty());
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            estadoTurnoService.delete("99");
+        UUID id = UUID.randomUUID();
+        when(estadoTurnoRepository.findById(id)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            estadoTurnoService.delete(id);
         });
-        assertTrue(ex.getMessage().contains("No existe un estado de turno"));
-        verify(estadoTurnoRepository, never()).delete("99");
+
+        assertEquals("No existe un estado de turno con el ID proporcionado.", exception.getMessage());
+        verify(estadoTurnoRepository, never()).deleteById(any());
     }
 
     // Test delete cuando el estado está en uso lanza excepción
     @Test
     void testDeleteEstadoEnUsoThrows() {
-        EstadoTurno existente = new EstadoTurno("1", "Pendiente");
-        when(estadoTurnoRepository.findById("1")).thenReturn(Optional.of(existente));
-        when(estadoTurnoRepository.existUsoDelEstado("1")).thenReturn(1L);
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            estadoTurnoService.delete("1");
-        });
-        assertTrue(ex.getMessage().contains("No se puede eliminar el estado de turno porque está en uso."));
+        UUID id = UUID.randomUUID();
+        when(estadoTurnoRepository.findById(id)).thenReturn(Optional.of(new EstadoTurno()));
+        when(estadoTurnoRepository.countByEstadoTurnoEnUso(id)).thenReturn(1L);
 
-        verify(estadoTurnoRepository, never()).delete("1");
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            estadoTurnoService.delete(id);
+        });
+
+        assertEquals("No se puede eliminar el estado de turno porque está en uso.", exception.getMessage());
+        verify(estadoTurnoRepository, never()).deleteById(any());
     }
 }

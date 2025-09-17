@@ -21,6 +21,7 @@ public class EstadoTurnoDTO {
     private String id;
     
     @NotBlank(groups = {OnCreate.class, OnUpdate.class}, message = "Nombre requerido")
-    @Size(max = 120, message = "Nombre máximo 120 caracteres")
+    @Size(max = 60, message = "Nombre máximo 120 caracteres")
     private String nombre;
+    
 }

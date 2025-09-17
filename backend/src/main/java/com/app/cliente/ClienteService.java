@@ -22,6 +22,7 @@ public class ClienteService {
         if (repo.countByEmailOrDniOrTelefonoAndId(cliente.getEmail(), cliente.getDni(), cliente.getTelefono(), null) > 0) {
             throw new IllegalArgumentException("Ya existe un cliente con ese email, DNI o teléfono.");
         }
+        
         Cliente entity = mapper.toEntity(cliente);
         entity = repo.save(entity);
         return mapper.toDTO(entity);
@@ -30,13 +31,14 @@ public class ClienteService {
     public ClienteDTO update(ClienteDTO dto) {
         Cliente existente = repo.findById(UUID.fromString(dto.getId()))
             .orElseThrow(() -> new IllegalArgumentException("No existe un cliente con el ID proporcionado."));
-        if ((!dto.getEmail().equals(existente.getEmail()) ||
-            !dto.getDni().equals(existente.getDni()) ||
-            !dto.getTelefono().equals(existente.getTelefono())) &&
-            repo.countByEmailOrDniOrTelefonoAndId(dto.getEmail(), dto.getDni(), dto.getTelefono(), UUID.fromString(dto.getId())) > 0) {
-            throw new IllegalArgumentException("Ya existe un cliente con ese email, DNI o teléfono.");
+        if ((!dto.getEmail().equals(existente.getEmail()) &&
+            !dto.getDni().equals(existente.getDni()) &&
+            !dto.getTelefono().equals(existente.getTelefono()))){
+                if (repo.countByEmailOrDniOrTelefonoAndId(dto.getEmail(), dto.getDni(), dto.getTelefono(), UUID.fromString(dto.getId())) > 0) {
+                    throw new IllegalArgumentException("Ya existe un cliente con ese email, DNI o teléfono.");
+            }
+            
         }
-        validarCamposDelCliente(dto);
         capitalizacionDeCliente(dto);
         Cliente entity = mapper.toEntity(dto);
         entity = repo.save(entity);
@@ -44,6 +46,11 @@ public class ClienteService {
     }
 
     public void delete(UUID id) {
+        if (!repo.existsById(id)) {
+            throw new IllegalArgumentException("No existe un cliente con el ID proporcionado.");
+        }
+        if (repo.turnosPendientes(id)>0)
+            throw new IllegalArgumentException("No se puede eliminar el cliente porque tiene turnos pendientes.");
         repo.deleteById(id);
     }
 
@@ -70,7 +77,7 @@ public class ClienteService {
     }
 
     public List<ClienteDTO> findByEmail(String email) {
-        if (email.trim().isEmpty())
+        if (email == null || email.trim().isEmpty())
             throw new IllegalArgumentException("El email es obligatorio para buscar.");
         return repo.findByEmail(email).stream().map(mapper::toDTO).toList();
     }
@@ -83,9 +90,7 @@ public class ClienteService {
 
     // Utils
 
-    public void validarCamposDelCliente(ClienteDTO c) {
-        if (c.getTelefono().matches("^0+$")) throw new IllegalArgumentException("El teléfono no puede ser solo ceros.");
-    }
+    
 
     //metodos aux
     public void capitalizacionDeCliente(ClienteDTO c) { 

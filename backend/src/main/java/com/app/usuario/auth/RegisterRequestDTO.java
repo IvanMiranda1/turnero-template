@@ -1,6 +1,5 @@
 package com.app.usuario.auth;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioRegistroDTO {
-    private UsuarioDatosDTO usuario;
-    private UsuarioCredencialesDTO auth;
+public class RegisterRequestDTO {
+    String dni;
+    String password;
+    String nombre;
+    String apellido;
+    String email;
 }

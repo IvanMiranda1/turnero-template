@@ -48,15 +48,15 @@ public class UsuarioService {
     public List<Usuario> findByDni(String dni) {
         dni = DataNormalizer.normalizeDni(dni);
 
-        return repo.findByDni(dni);
+        return repo.findByDniContaining(dni);
     }
 
     public List<Usuario> findByNombre(String nombre) {
-        return repo.findByNombre(nombre);
+        return repo.findByNombreContaining(nombre);
     }
 
     public List<Usuario> findByApellido(String apellido) {
-        return repo.findByApellido(apellido);
+        return repo.findByApellidoContaining(apellido);
     }
 
     //metodos aux

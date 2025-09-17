@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioAuth {
-    private String id;
-    private String dni; // referencia al usuario
-    private PasswordHash password;
+public class LoginRequest {
+    private String dni;
+    private String password;
 }

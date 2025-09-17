@@ -14,7 +14,7 @@ public class ServicioService {
     public ServicioService(ServicioRepository repo, ServicioMapper mapper) {this.repo = repo;this.mapper = mapper;}
 
     public ServicioDTO create(ServicioDTO dto) {
-        dto.setNombre(DataNormalizer.capitalizarPalabras(dto.getNombre().trim()));
+        dto.setNombre(DataNormalizer.capitalizarPalabras(dto.getNombre()));
         // Validar unicidad del nombrev
         if (repo.countByNombre(dto.getNombre()) > 0) {
             throw new IllegalArgumentException("Ya existe un servicio con ese nombre.");
@@ -28,11 +28,12 @@ public class ServicioService {
         Servicio existente = repo.findById(UUID.fromString(dto.getId()))
             .orElseThrow(() -> new IllegalArgumentException("No existe un servicio con el ID proporcionado."));
         // Capitalizar el nombre del dto
-        dto.setNombre(dto.getNombre().trim().toUpperCase());
+        dto.setNombre(DataNormalizer.capitalizarPalabras(dto.getNombre()));
         // Validar unicidad del nombre si ha cambiado
-        if (!dto.getNombre().equals(existente.getNombre()) &&
-            repo.countByNombre(dto.getNombre()) > 0) {
-            throw new IllegalArgumentException("Ya existe un servicio con ese nombre.");
+        if (!dto.getNombre().equals(existente.getNombre())){
+            if (repo.countByNombre(dto.getNombre()) > 0) {
+                throw new IllegalArgumentException("Ya existe un servicio con ese nombre.");
+            }
         }
         // Actualizar el dto
         Servicio entity = mapper.toEntity(dto);
@@ -44,7 +45,7 @@ public class ServicioService {
         if (!repo.findById(id).isPresent()) {
             throw new IllegalArgumentException("No existe un servicio con el ID proporcionado.");
         }
-        if (repo.TurnosAsociados(id) > 0) {
+        if (repo.turnosAsociados(id) > 0) {
             throw new IllegalArgumentException("No se puede eliminar el servicio porque tiene turnos asociados.");
         }
         repo.deleteById(id);

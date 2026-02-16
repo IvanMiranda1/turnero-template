@@ -64,3 +64,14 @@ com/
 1. Clone the repository:
    ```bash
    git clone git@github.com:IvanMiranda1/turnero-template.git
+2. Build the project:
+   ```bash
+    cd turnero-template/backend
+    ./mvnw clean package
+    cd .. # Come back to the root directory
+3. Run the container:
+   ```bash
+   docker compose up -d
+4. Check if the container is running:
+   ```bash
+   docker ps
